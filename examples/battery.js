@@ -1,0 +1,11 @@
+const level = 3;
+lineWidth(0.05);
+const lineColor = level == 0 ? '#aaa' : '#222';
+strokeStyle(lineColor);
+fillStyle(lineColor);
+vsymRect(-0.3, -0.35, 0.775).stroke();
+vsymRect(-0.12, -0.425, 0.05).stroke().fill();
+if (level == 3) fillStyle('#8d2');
+if (level == 2) fillStyle('#ea4');
+if (level == 1) fillStyle('#e66');
+for (var i = 0; i < level; ++i) vsymRect(-0.225, 0.175 - i * 0.225, 0.175).fill();

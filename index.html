@@ -1,0 +1,107 @@
+<html>
+  <head>
+    <style>
+     body {
+       background-color: #eee;
+     }
+     
+     #result {
+       width: 10rem;
+       height: 10rem;
+       background-color: #fff;
+     }
+
+     #code {
+       width: 30rem;
+       height: 20rem;
+     }
+     
+     #canvas {
+       display: none;
+     }
+    </style>
+    <title>Pictomancer LV 1</title>
+  </head>
+  <body>
+    <p><canvas id="result" width="1024" height="1024"></canvas></p>
+    <p><textarea id="code"></textarea></p>
+    <canvas id="canvas" width="1024" height="1024"></canvas>
+    <script>
+     window.addEventListener('load', () => {
+       const size = 1024;
+       const canvas = document.getElementById('canvas');
+       canvas.width = size;
+       canvas.height = size;
+       {
+         const resultCanvas = document.getElementById('result');
+         resultCanvas.width = size;
+         resultCanvas.height = size;
+       }
+       const context = canvas.getContext('2d');
+       const PI = Math.PI;
+       const cs = (n) => n * size;
+       const lineWidth = (n) => context.lineWidth = cs(n);
+       const strokeStyle = (x) => context.strokeStyle = x;
+       const fillStyle = (x) => context.fillStyle = x;
+       const lineCap = (x) => context.lineCap = x;
+       const lineJoin = (x) => context.lineJoin = x;
+       const rect = (x, y, w, h) => ({
+         stroke() {
+           context.strokeRect(cs(x), cs(y), cs(w), cs(h));
+           return this;
+         },
+         fill() {
+           context.fillRect(cs(x), cs(y), cs(w), cs(h));
+           return this;
+         }
+       });
+       const line = (sx, sy, dx, dy) => {
+         context.beginPath();
+         context.moveTo(cs(sx), cs(sy));
+         context.lineTo(cs(dx), cs(dy));
+         context.stroke();
+       };
+       const point = (x, y) => line(x, y, x, y);
+       const vsymRect = (x, y, h) => rect(x, y, -x * 2, h);
+       const hsymRect = (x, y, w) => rect(x, y, w, -y * 2);
+       const symRect = (x, y) => vsymRect(x, y, -y * 2);
+       const arc = (x, y, r, sa, ea, ac) => ({
+         stroke() {
+           context.beginPath();
+           context.arc(cs(x), cs(y), cs(r), sa, ea, ac);
+           context.stroke();
+           return this;
+         },
+         fill() {
+           context.beginPath();
+           context.arc(cs(x), cs(y), cs(r), sa, ea, ac);
+           context.fill();
+           return this;
+         }
+       });
+       lineWidth(0.05);
+       strokeStyle('#222');
+       fillStyle('#222');
+       lineJoin('round');
+       lineCap('round');
+       context.translate(cs(0.5), cs(0.5));
+       setInterval(() => {
+         context.save();
+         context.clearRect(-cs(0.5), -cs(0.5), cs(1), cs(1));
+         try {
+           eval(document.getElementById('code').value);
+           {
+             const resultContext = document.getElementById('result').getContext('2d');
+             resultContext.clearRect(0, 0, size, size);
+             resultContext.drawImage(canvas, 0, 0);
+           }
+         } catch (err) {
+           console.log(err);
+         } finally {
+           context.restore();
+         }
+       }, 200);
+     });
+    </script>
+  </body>
+</html>
